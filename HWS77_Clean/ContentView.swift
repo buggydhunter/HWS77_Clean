@@ -11,11 +11,24 @@ import PhotosUI
 struct ContentView: View {
     
     @State private var viewModel = ViewModel()
-
     
     var body: some View {
        
         NavigationStack {
+            
+            Button("Start Tracking Location") {
+                viewModel.locationFetcher.start()
+                viewModel.locationFetched = true
+                     }
+
+                     Button("Read Location") {
+                         if let location = viewModel.locationFetcher.lastKnownLocation {
+                             print("Your location is \(location)")
+                         } else {
+                             print("Your location is unknown")
+                         }
+                     }
+            
             
             List {
                 ForEach(viewModel.people) { person in
@@ -47,6 +60,8 @@ struct ContentView: View {
                 NameSheetView(person: unwrappedDraft) { finishedPerson in
                     
                     // This runs when they tap "Save" in the sheet
+                    // I am not entirely sure if this solves the saving of location but it should right? 
+//                    viewModel.addCoordinateToPerson() -> this does not work here and i don't know why, probably because loadImages does not add the cordinates?? But that shouldn't be the problem please explain it.
                     viewModel.addPerson(person: finishedPerson)
                     
                 }

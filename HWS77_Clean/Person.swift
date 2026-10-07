@@ -5,11 +5,16 @@ struct Person: Identifiable, Comparable, Codable, Equatable, Hashable {
     var id: UUID
     var name: String
     var images: [UIImage]
+    var longitute: Double?
+    var latitude: Double?
+
     
     enum CodingKeys: CodingKey {
         case id
         case name
         case images
+        case longitude
+        case latitude
     }
     
     // 1. Restore the standard initializer
@@ -31,6 +36,9 @@ struct Person: Identifiable, Comparable, Codable, Equatable, Hashable {
         
         // Convert [Data] back into [UIImage]
         images = imagesData.compactMap { UIImage(data: $0) }
+        
+        longitute = try container.decodeIfPresent(Double.self, forKey: .longitude)
+        latitude = try container.decodeIfPresent(Double.self, forKey: .latitude)
     }
 
     // 3. Encode to JSON
@@ -45,6 +53,25 @@ struct Person: Identifiable, Comparable, Codable, Equatable, Hashable {
         
         // Encode the resulting data array
         try container.encode(imagesData, forKey: .images)
+        
+        guard (longitute != nil) else {
+            do {
+                try container.encode(longitute, forKey: .longitude)
+            } catch {
+                print("Longitute couldn't be encoded")
+            }
+            return
+        }
+        
+        guard (latitude != nil) else {
+            do {
+                try container.encode(latitude, forKey: .latitude)
+            } catch {
+                print("latitude couldn't be encoded")
+            }
+            return
+        }
+        
     }
     
     static func ==(lhs: Person, rhs: Person) -> Bool {

@@ -16,9 +16,11 @@ extension ContentView {
         var people : [Person]
         var selectedItems = [PhotosPickerItem]()
         var showPhotosPicker: Bool = false
+        var locationFetched: Bool = false
         var draftPerson: Person?
         
         let savePath = URL.documentsDirectory.appending(path: "KnownPeople")
+        let locationFetcher = LocationFetcher()
         
         init() {
             do {
@@ -62,11 +64,20 @@ extension ContentView {
                 // LOOP IS FINISHED. Now create ONE person and show the sheet.
                 if newImages.isEmpty == false {
                     draftPerson = Person(id: UUID(), name: "", images: newImages)
+                    addCoordinateToPerson()
                 }
             }
         }
         // i should include a method to remove a person later on maybe -> needs to be something that works with ondelete hopefully or inside ondelete
         
+        func addCoordinateToPerson() {
+            
+                if locationFetched {
+                    draftPerson!.longitute = locationFetcher.lastKnownLocation?.longitude
+                    draftPerson!.latitude = locationFetcher.lastKnownLocation?.latitude
+                }
+            
+        }
     }
 
 }
